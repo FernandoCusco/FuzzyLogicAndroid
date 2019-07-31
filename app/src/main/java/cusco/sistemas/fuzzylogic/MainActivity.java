@@ -204,7 +204,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private class ControlDifuzo{
         FIS fis;
         public ControlDifuzo(){
-            fis = FIS.load("cusco.sistemas.fuzzylogic.Control", true);
+            //fis = FIS.load("cusco.sistemas.fuzzylogic.Control", true);
+            fis = FIS.load("Control", true);
         }
         public void defuzificacion(String a, String d){
             fis.setVariable("alcohol", Double.parseDouble(a));
