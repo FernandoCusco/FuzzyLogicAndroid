@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +26,7 @@ import net.sourceforge.jFuzzyLogic.FIS;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -38,6 +40,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnListar;
     private Button btnConectar;
     private Button btnLeer;
+
+
+
+    private Button arriba;
+    private Button abajo;
+    private Button derecha;
+    private Button izquierda;
+    private Button offMotor;
 
 
     private ListView lstListar;
@@ -88,12 +98,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         lstListar = (ListView) findViewById(R.id.tvLista);
         txtMac = (EditText) findViewById(R.id.txtMacAddress);
         txtMac.setInputType(InputType.TYPE_NULL);
+
+        arriba = (Button) findViewById(R.id.btnArriba);
+        abajo = (Button) findViewById(R.id.btnAbajo);
+        derecha = (Button) findViewById(R.id.btnDerecha);
+        izquierda = (Button) findViewById(R.id.btnIzquierda);
+        offMotor = (Button) findViewById(R.id.btnOff);
+
         btnLeer = (Button) findViewById(R.id.btnLeer);
         btnConectar = (Button) findViewById(R.id.btnConectar);
         btnListar = (Button) findViewById(R.id.btnListar);
         btnListar.setOnClickListener(this);
         btnConectar.setOnClickListener(this);
         btnLeer.setOnClickListener(this);
+        arriba.setOnClickListener(this);
+        abajo.setOnClickListener(this);
+        derecha.setOnClickListener(this);
+        izquierda.setOnClickListener(this);
+        offMotor.setOnClickListener(this);
 
         isConnect = false;
 
@@ -119,6 +141,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String dista = distancia.getText().toString();
             ControlDifuzo c = new ControlDifuzo();
             c.defuzificacion(nivel, dista);
+        }
+
+        if(view.getId() == R.id.btnArriba){
+            try {
+                dou.write((int) 'a');
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+        if(view.getId() == R.id.btnAbajo){
+            try {
+                dou.write((int) 'b');
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+        if(view.getId() == R.id.btnDerecha){
+            try {
+                dou.write((int) 'c');
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+        if(view.getId() == R.id.btnIzquierda){
+            try {
+                dou.write((int) 'd');
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+        if(view.getId() == R.id.btnOff){
+            try {
+                dou.write((int) 'e');
+            } catch (IOException e){
+                e.printStackTrace();
+            }
         }
 
     }
@@ -204,11 +262,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private class ControlDifuzo{
         FIS fis;
         public ControlDifuzo(){
-            fis = FIS.load("cusco.sistemas.fuzzylogic.Control", true);
+            try {
+                fis = FIS.load(getApplicationContext().getResources().getAssets().open("Control", Context.MODE_WORLD_READABLE), true);
+            } catch (IOException e){
+                e.printStackTrace();
+            }
         }
         public void defuzificacion(String a, String d){
-            fis.setVariable("alcohol", Double.parseDouble(a));
-            fis.setVariable("distancia", Double.parseDouble(d));
+            //fis.setVariable("alcohol", Double.parseDouble(a));
+            //fis.setVariable("distancia", Double.parseDouble(d));
+            fis.setVariable("alcohol", 40);
+            fis.setVariable("distancia", 80);
             fis.evaluate();
             double resultado = fis.getVariable("velocidad").getLatestDefuzzifiedValue();
             Toast.makeText(MainActivity.this, "VELOCIDAD SUGERIDA: "+resultado, Toast.LENGTH_SHORT).show();
