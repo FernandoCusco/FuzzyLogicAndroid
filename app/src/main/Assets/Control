@@ -1,0 +1,52 @@
+FUNCTION_BLOCK ControlVentilador
+
+VAR_INPUT
+    alcohol : REAL;
+END_VAR
+
+VAR_OUTPUT
+    distancia : REAL;
+END_VAR
+
+FUZZIFY alcohol
+    TERM bajo := (0,0)(72,1)(145,0);
+    TERM medio := (120,0)(220,1)(300,0);
+    TERM alto := (270,0)(500,1)(700,0);
+END_FUZZIFY
+
+FUZZIFY distancia
+    TERM bajo := (0,0)(12,1)(28,0);
+    TERM medio := (25,0)(45,1)(60,0);
+    TERM alto := (55,0)(75,1)(90,0);
+END_FUZZIFY
+
+DEFUZZIFY velocidad
+    TERM bajo := (0,0)(12,1)(28,0);
+    TERM medio := (25,0)(45,1)(60,0);
+    TERM alto := (55,0)(75,1)(90,0);
+
+    METHOD : COG;
+    DEFAULT:=0;
+END_DEFUZZIFY
+
+RULEBLOCK Reglas1
+    ACT : MIN;
+    AND : MIN;
+    ACCU : MAX;
+
+    RULE R1: IF "alcohol" IS "alto" AND "distancia" IS "alto" THEN "velocidad" IS "alto";
+    RULE R2: IF "alcohol" IS "alto" AND "distancia" IS "medio" THEN "velocidad" IS "medio";
+    RULE R3: IF "alcohol" IS "alto" AND "distancia" IS "bajo" THEN "velocidad" IS "bajo";
+    RULE R4: IF "alcohol" IS "medio" AND "distancia" IS "alto" THEN "velocidad" IS "alto";
+    RULE R5: IF "alcohol" IS "medio" AND "distancia" IS "medio" THEN "velocidad" IS "medio";
+    RULE R6: IF "alcohol" IS "medio" AND "distancia" IS "bajo" THEN "velocidad" IS "bajo";
+    RULE R7: IF "alcohol" IS "bajo" AND "distancia" IS "alto" THEN "velocidad" IS "alto";
+    RULE R8: IF "alcohol" IS "bajo" AND "distancia" IS "medio" THEN "velocidad" IS "medio";
+    RULE R9: IF "alcohol" IS "bajo" AND "distancia" IS "bajo" THEN "velocidad" IS "bajo";
+
+
+
+END_RULEBLOCK
+
+
+END_FUNCTION_BLOCK
